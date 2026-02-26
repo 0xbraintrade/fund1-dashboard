@@ -62,29 +62,31 @@ canvas { width: 100%; height: 100%; }
 .empty-state { color: var(--dim); text-align: center; padding: 40px; font-size: 12px; }
 
 @media (max-width: 768px) {
-  body { font-size: 12px; }
-  .header { padding: 10px 12px; flex-wrap: wrap; gap: 6px; }
-  .header h1 { font-size: 13px; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .stat-card { padding: 12px 8px; }
-  .stat-card .value { font-size: 20px; }
-  .stat-card .label { font-size: 9px; }
+  body { font-size: 12px; -webkit-text-size-adjust: 100%; }
+  .header { padding: 10px 14px; flex-wrap: wrap; gap: 4px; }
+  .header h1 { font-size: 14px; width: 100%; }
+  .header .live { font-size: 10px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 1px; }
+  .stat-card { padding: 14px 10px; }
+  .stat-card .value { font-size: 22px; }
+  .stat-card .label { font-size: 9px; letter-spacing: 1px; }
+  .stat-card .sub { font-size: 10px; }
   .grid { grid-template-columns: 1fr; }
   .two-col { grid-column: span 1; }
-  .controls { flex-wrap: wrap; padding: 10px 12px; gap: 6px; }
-  .controls input, .controls select { padding: 8px; font-size: 13px; min-width: 0; flex: 1; min-height: 36px; }
-  .controls button { padding: 8px 12px; font-size: 13px; min-height: 36px; flex: 1; }
-  .controls input[type="number"] { width: auto !important; }
-  .card { padding: 12px 8px; }
+  .card { padding: 14px 10px; }
+  .card-title { font-size: 11px; }
   table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-  th, td { padding: 6px; font-size: 11px; }
-  .footer { flex-direction: column; gap: 4px; text-align: center; padding: 8px 12px; }
-  .equity-chart { height: 160px; }
+  table thead { font-size: 9px; }
+  th, td { padding: 8px 6px; font-size: 11px; }
+  .footer { flex-direction: column; gap: 4px; text-align: center; padding: 10px 14px; }
+  .equity-chart { height: 180px; }
+  .fills-list { max-height: 250px; }
 }
 @media (max-width: 400px) {
   .stats-row { grid-template-columns: 1fr 1fr; }
-  .stat-card .value { font-size: 18px; }
-  .header h1 { font-size: 12px; }
+  .stat-card .value { font-size: 19px; }
+  .stat-card { padding: 12px 8px; }
+  .header h1 { font-size: 13px; }
 }
 </style>
 </head>
@@ -207,14 +209,13 @@ const SEED_TRADES = [
 function buildSeededState() {
   const s = defaultState();
   s.closedTrades = [...SEED_TRADES];
-  // Capital stays fixed at STARTING_CAPITAL — profits are separate
   s.capital = STARTING_CAPITAL;
-  // Equity curve tracks cumulative P&L separately
+  // Equity curve shows capital + cumulative realized P&L over time
   let cumulativePnl = 0;
-  s.equityCurve = [{t: new Date('2026-02-20T00:00:00Z').getTime(), v: 0}];
+  s.equityCurve = [{t: new Date('2026-02-20T00:00:00Z').getTime(), v: STARTING_CAPITAL}];
   SEED_TRADES.forEach(t => {
     cumulativePnl += t.pnl;
-    s.equityCurve.push({t: t.closedAt, v: cumulativePnl});
+    s.equityCurve.push({t: t.closedAt, v: STARTING_CAPITAL + cumulativePnl});
   });
   return s;
 }
@@ -503,7 +504,8 @@ function drawEquityChart() {
   ctx.fillRect(0, 0, W, H);
 
   const curve = [...state.equityCurve];
-  const currentVal = state.capital + getUnrealizedPnl();
+  const realizedTotal = state.closedTrades.reduce((s,t) => s + t.pnl, 0);
+  const currentVal = STARTING_CAPITAL + realizedTotal + getUnrealizedPnl();
   curve.push({t: Date.now(), v: currentVal});
 
   if (curve.length < 2) return;
