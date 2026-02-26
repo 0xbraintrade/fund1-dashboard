@@ -92,6 +92,32 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 /* Footer */
 .app-footer { text-align: center; padding: 20px 16px 30px; color: var(--dim); font-size: 11px; line-height: 1.6; }
 
+/* Analysis Section */
+.analysis { margin: 16px; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+.analysis-header { padding: 16px 18px 12px; display: flex; justify-content: space-between; align-items: center; }
+.analysis-title { font-size: 13px; font-weight: 700; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+.analysis-date { font-size: 11px; color: var(--blue); font-weight: 600; }
+.analysis-body { padding: 0 18px 18px; }
+.analysis-bias { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 800; margin-bottom: 14px; }
+.bias-bullish { background: var(--green-bg); color: var(--green); }
+.bias-bearish { background: var(--red-bg); color: var(--red); }
+.bias-neutral { background: rgba(250,204,21,0.1); color: #facc15; }
+.analysis-price { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.analysis-section { margin-top: 14px; }
+.analysis-section-title { font-size: 11px; font-weight: 700; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.analysis-text { font-size: 13px; line-height: 1.7; color: var(--text); opacity: 0.9; }
+.level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.level-item { padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.03); }
+.level-label { font-size: 10px; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.level-value { font-size: 14px; font-weight: 700; margin-top: 2px; }
+.level-value.res { color: var(--red); }
+.level-value.sup { color: var(--green); }
+.indicator-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.indicator { padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 12px; }
+.indicator span { font-weight: 700; }
+.play-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.5; }
+.play-bullet { flex-shrink: 0; margin-top: 2px; }
+
 /* Positive/Negative */
 .positive { color: var(--green); }
 .negative { color: var(--red); }
@@ -176,6 +202,61 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
     <div class="list-title">Active Positions</div>
   </div>
   <div class="trades-scroll"><div id="active-list"></div></div>
+</div>
+
+<div class="analysis" id="daily-analysis">
+  <div class="analysis-header">
+    <div class="analysis-title">💀 Daily BTC Analysis</div>
+    <div class="analysis-date" id="analysis-date">Feb 26, 2026</div>
+  </div>
+  <div class="analysis-body">
+    <div class="analysis-price" id="analysis-price">$67,407</div>
+    <div class="analysis-bias bias-neutral">🟡 NEUTRAL-BULLISH</div>
+
+    <div class="analysis-section">
+      <div class="analysis-section-title">The Setup</div>
+      <div class="analysis-text">BTC bounced hard from $62,468 (Feb 24 low) back to $68K, reclaiming the range. Yesterday's candle was a massive $6K wick recovery — buyers stepped in aggressively at $63.8K. Today consolidating $66.5K–$68.8K.</div>
+    </div>
+
+    <div class="analysis-section">
+      <div class="analysis-section-title">Key Levels</div>
+      <div class="level-grid">
+        <div class="level-item"><div class="level-label">Resistance 1</div><div class="level-value res">$69,000</div></div>
+        <div class="level-item"><div class="level-label">Resistance 2</div><div class="level-value res">$70,000</div></div>
+        <div class="level-item"><div class="level-label">Support 1</div><div class="level-value sup">$66,500</div></div>
+        <div class="level-item"><div class="level-label">Support 2</div><div class="level-value sup">$62,500</div></div>
+      </div>
+    </div>
+
+    <div class="analysis-section">
+      <div class="analysis-section-title">Indicators</div>
+      <div class="indicator-row">
+        <div class="indicator">SMA20 (4h) <span class="positive">$65,879</span></div>
+        <div class="indicator">RSI (4h) <span>68.1</span></div>
+        <div class="indicator">Funding <span class="positive">+0.0013%</span></div>
+        <div class="indicator">OI <span>21,116 BTC</span></div>
+        <div class="indicator">24h Vol <span>$2.9B</span></div>
+      </div>
+    </div>
+
+    <div class="analysis-section">
+      <div class="analysis-section-title">Thesis</div>
+      <div class="analysis-text">The Feb 24 flush to $62.4K looks like a bear trap — massive V-recovery with strong volume. However, approaching $69–70K resistance which has rejected multiple times in February. Clean break above $70K opens $75K. Failure here means retest of $64–65K.</div>
+    </div>
+
+    <div class="analysis-section">
+      <div class="analysis-section-title">The Play</div>
+      <div class="play-item"><span class="play-bullet">🟢</span> Long bias above $66K with tight stop at $65K</div>
+      <div class="play-item"><span class="play-bullet">🟢</span> Wait for $70K break for conviction add</div>
+      <div class="play-item"><span class="play-bullet">🔴</span> Short only on clean break below $62.5K</div>
+      <div class="play-item"><span class="play-bullet">⚠️</span> Don't chase — let the level come to you</div>
+    </div>
+
+    <div class="analysis-section">
+      <div class="analysis-section-title">Risks</div>
+      <div class="analysis-text">Macro headwinds (tariffs, Iran tensions) still present. Multiple rejections at $70K — could form lower high. Weekend liquidity thin — watch for Sunday dumps.</div>
+    </div>
+  </div>
 </div>
 
 <div class="app-footer">
