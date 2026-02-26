@@ -123,38 +123,7 @@ canvas { width: 100%; height: 100%; }
   </div>
 </div>
 
-<div class="controls">
-  <select id="trade-coin">
-    <option value="BTC">BTC</option>
-    <option value="ETH">ETH</option>
-    <option value="SOL">SOL</option>
-    <option value="DOGE">DOGE</option>
-    <option value="XRP">XRP</option>
-    <option value="LINK">LINK</option>
-    <option value="ARB">ARB</option>
-    <option value="AVAX">AVAX</option>
-    <option value="MATIC">MATIC</option>
-    <option value="OP">OP</option>
-  </select>
-  <select id="trade-side">
-    <option value="LONG">LONG</option>
-    <option value="SHORT">SHORT</option>
-  </select>
-  <input type="number" id="trade-size" placeholder="Size (USDC)" value="5000" style="width:120px">
-  <select id="trade-leverage">
-    <option value="1">1x</option>
-    <option value="2">2x</option>
-    <option value="3">3x</option>
-    <option value="5">5x</option>
-    <option value="10" selected>10x</option>
-    <option value="20">20x</option>
-  </select>
-  <input type="number" id="trade-sl" placeholder="SL %" value="2" style="width:80px">
-  <input type="number" id="trade-tp" placeholder="TP %" value="4" style="width:80px">
-  <button onclick="openTrade()">Open Trade</button>
-  <button class="danger" onclick="closeAllTrades()">Close All</button>
-  <button onclick="resetAccount()" style="background:var(--dim)">Reset</button>
-</div>
+<!-- Trades managed via API -->
 
 <div class="grid">
   <div class="card">
@@ -177,7 +146,7 @@ canvas { width: 100%; height: 100%; }
   <div class="card full">
     <div class="card-title">Active Positions <span id="active-count" style="color:var(--blue)"></span></div>
     <table>
-      <thead><tr><th>Time</th><th>Coin</th><th>Side</th><th>Size</th><th>Leverage</th><th>Entry</th><th>Mark</th><th>uPnL</th><th>SL</th><th>TP</th><th>Action</th></tr></thead>
+      <thead><tr><th>Time</th><th>Coin</th><th>Side</th><th>Size</th><th>Leverage</th><th>Entry</th><th>Mark</th><th>uPnL</th><th>SL</th><th>TP</th></tr></thead>
       <tbody id="active-body"></tbody>
     </table>
   </div>
@@ -367,7 +336,7 @@ function render() {
   const activeBody = document.getElementById('active-body');
   document.getElementById('active-count').textContent = state.trades.length ? '(' + state.trades.length + ')' : '';
   if (!state.trades.length) {
-    activeBody.innerHTML = '<tr><td colspan="11" class="empty-state">No active positions</td></tr>';
+    activeBody.innerHTML = '<tr><td colspan="10" class="empty-state">No active positions</td></tr>';
   } else {
     activeBody.innerHTML = state.trades.map(t => {
       const mark = prices[t.coin] || t.entryPrice;
@@ -388,7 +357,6 @@ function render() {
         <td class="${pnlClass}"><strong>${fmtPnl(pnl)}</strong></td>
         <td style="color:var(--red)">${typeof slPrice === 'number' ? fmtUsd(slPrice) : slPrice}</td>
         <td style="color:var(--green)">${typeof tpPrice === 'number' ? fmtUsd(tpPrice) : tpPrice}</td>
-        <td><button onclick="closeTrade(${t.id})" style="background:var(--red);color:#fff;border:none;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:11px">Close</button></td>
       </tr>`;
     }).join('');
   }
