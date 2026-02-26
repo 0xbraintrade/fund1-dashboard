@@ -61,16 +61,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .list-title { font-size: 13px; font-weight: 700; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
 .list-count { font-size: 12px; color: var(--blue); font-weight: 700; }
 
-/* Trade Cards (mobile-friendly, no table) */
-.trade-card { padding: 14px 18px; border-top: 1px solid var(--border); }
-.trade-card:first-child { border-top: none; }
-.trade-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.trade-coin { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-.trade-pnl { font-size: 16px; font-weight: 800; }
-.trade-details { display: flex; gap: 16px; flex-wrap: wrap; }
-.trade-detail { }
-.trade-detail-label { font-size: 10px; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-.trade-detail-value { font-size: 13px; font-weight: 600; margin-top: 1px; }
+/* Trade Rows */
+.trade-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-top: 1px solid var(--border); gap: 8px; }
+.trade-row:first-child { border-top: none; }
+.trade-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.trade-coin { font-size: 14px; font-weight: 800; white-space: nowrap; }
+.trade-meta { font-size: 12px; color: var(--dim); white-space: nowrap; }
+.trade-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.trade-pnl { font-size: 14px; font-weight: 800; white-space: nowrap; }
 
 .tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
 .tag-long { background: var(--green-bg); color: var(--green); }
@@ -288,17 +286,15 @@ function render() {
     tl.innerHTML='<div class="empty">No trades yet</div>';
   } else {
     tl.innerHTML = [...TRADES].reverse().map(t => `
-      <div class="trade-card">
-        <div class="trade-top">
-          <div class="trade-coin">${t.coin} <span class="tag ${t.side==='LONG'?'tag-long':'tag-short'}">${t.side}</span></div>
-          <div class="trade-pnl ${t.pnl>=0?'positive':'negative'}">${fmtPnl(t.pnl)}</div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <span class="trade-coin">${t.coin}</span>
+          <span class="tag ${t.side==='LONG'?'tag-long':'tag-short'}">${t.side}</span>
+          <span class="trade-meta">${fmtDate(t.opened)} · ${fmtUsd(t.entry)} → ${fmtUsd(t.exit)}</span>
         </div>
-        <div class="trade-details">
-          <div class="trade-detail"><div class="trade-detail-label">Date</div><div class="trade-detail-value">${fmtDate(t.opened)}</div></div>
-          <div class="trade-detail"><div class="trade-detail-label">Entry</div><div class="trade-detail-value">${fmtUsd(t.entry)}</div></div>
-          <div class="trade-detail"><div class="trade-detail-label">Exit</div><div class="trade-detail-value">${fmtUsd(t.exit)}</div></div>
-          <div class="trade-detail"><div class="trade-detail-label">Size</div><div class="trade-detail-value">${fmtUsd(t.size)}</div></div>
-          <div class="trade-detail"><div class="trade-detail-label">Result</div><div class="trade-detail-value"><span class="tag ${t.result==='WIN'?'tag-win':'tag-loss'}">${t.result}</span></div></div>
+        <div class="trade-right">
+          <span class="trade-pnl ${t.pnl>=0?'positive':'negative'}">${fmtPnl(t.pnl)}</span>
+          <span class="tag ${t.result==='WIN'?'tag-win':'tag-loss'}">${t.result}</span>
         </div>
       </div>`).join('');
   }
@@ -325,16 +321,14 @@ function render() {
   else{al.innerHTML=activeTrades.map(t=>{
     const m=prices[t.coin]||t.entry;const dir=t.side==='LONG'?1:-1;
     const pnl=((m-t.entry)/t.entry)*dir*t.size*t.lev;
-    return `<div class="trade-card">
-      <div class="trade-top">
-        <div class="trade-coin">${t.coin} <span class="tag ${t.side==='LONG'?'tag-long':'tag-short'}">${t.side}</span></div>
-        <div class="trade-pnl ${pnl>=0?'positive':'negative'}">${fmtPnl(pnl)}</div>
+    return `<div class="trade-row">
+      <div class="trade-left">
+        <span class="trade-coin">${t.coin}</span>
+        <span class="tag ${t.side==='LONG'?'tag-long':'tag-short'}">${t.side}</span>
+        <span class="trade-meta">${fmtUsd(t.entry)} → ${fmtUsd(m)} · ${t.lev}x</span>
       </div>
-      <div class="trade-details">
-        <div class="trade-detail"><div class="trade-detail-label">Entry</div><div class="trade-detail-value">${fmtUsd(t.entry)}</div></div>
-        <div class="trade-detail"><div class="trade-detail-label">Mark</div><div class="trade-detail-value">${fmtUsd(m)}</div></div>
-        <div class="trade-detail"><div class="trade-detail-label">Size</div><div class="trade-detail-value">${fmtUsd(t.size)}</div></div>
-        <div class="trade-detail"><div class="trade-detail-label">Leverage</div><div class="trade-detail-value">${t.lev}x</div></div>
+      <div class="trade-right">
+        <span class="trade-pnl ${pnl>=0?'positive':'negative'}">${fmtPnl(pnl)}</span>
       </div>
     </div>`;}).join('');}
 
