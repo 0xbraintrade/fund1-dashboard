@@ -370,13 +370,11 @@ function render() {
   const kPnl = totalPnl / 2;
   const hEl = document.getElementById('h-pnl');
   hEl.textContent = fmtPnl(hPnl);
-  hEl.className = 'value ' + (hPnl >= 0 ? 'positive' : 'negative');
-  document.getElementById('h-pnl-pct').textContent = (hPnl >= 0 ? '+' : '') + fmt(hPnl / STARTING_CAPITAL * 100) + '%';
+  hEl.style.color = hPnl >= 0 ? 'var(--green)' : 'var(--red)';
 
   const kEl = document.getElementById('k-pnl');
   kEl.textContent = fmtPnl(kPnl);
-  kEl.className = 'value ' + (kPnl >= 0 ? 'positive' : 'negative');
-  document.getElementById('k-pnl-pct').textContent = (kPnl >= 0 ? '+' : '') + fmt(kPnl / STARTING_CAPITAL * 100) + '%';
+  kEl.style.color = kPnl >= 0 ? 'var(--green)' : 'var(--red)';
 
   document.getElementById('total-trades').textContent = totalTradeCount;
   document.getElementById('trades-sub').textContent = state.closedTrades.length + ' closed';
