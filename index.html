@@ -21,7 +21,7 @@ body { background: var(--bg); color: var(--text); font-family: 'SF Mono', 'Fira 
 .header .live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); }
+.stats-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--border); }
 .stat-card { background: var(--card); padding: 20px; text-align: center; }
 .stat-card .label { color: var(--dim); font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
 .stat-card .value { font-size: 28px; font-weight: 700; }
@@ -125,6 +125,11 @@ canvas { width: 100%; height: 100%; }
     <div class="label">Win Rate</div>
     <div class="value" id="win-rate">—</div>
     <div class="sub" id="win-loss">0W / 0L</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Annualized Return</div>
+    <div class="value" id="apr-value">—</div>
+    <div class="sub" id="apr-sub">time-adjusted</div>
   </div>
 </div>
 
@@ -385,6 +390,23 @@ function render() {
   wrEl.textContent = (wins + losses) > 0 ? fmt(winRate, 0) + '%' : '—';
   wrEl.className = 'value ' + (winRate >= 50 ? 'positive' : winRate > 0 ? 'negative' : '');
   document.getElementById('win-loss').textContent = wins + 'W / ' + losses + 'L';
+
+  // APR calculation
+  const aprEl = document.getElementById('apr-value');
+  const aprSub = document.getElementById('apr-sub');
+  if (state.closedTrades.length > 0) {
+    const firstTrade = state.closedTrades.reduce((a,b) => a.openedAt < b.openedAt ? a : b);
+    const lastTrade = state.closedTrades.reduce((a,b) => a.closedAt > b.closedAt ? a : b);
+    const daysDiff = Math.max((lastTrade.closedAt - firstTrade.openedAt) / (1000*60*60*24), 1);
+    const returnPct = totalPnl / STARTING_CAPITAL;
+    const annualized = (Math.pow(1 + returnPct, 365 / daysDiff) - 1) * 100;
+    aprEl.textContent = fmt(annualized, 1) + '%';
+    aprEl.style.color = annualized >= 0 ? 'var(--green)' : 'var(--red)';
+    aprSub.textContent = fmt(daysDiff, 0) + ' days tracked';
+  } else {
+    aprEl.textContent = '—';
+    aprSub.textContent = 'no trades yet';
+  }
 
   // Active positions
   const activeBody = document.getElementById('active-body');
