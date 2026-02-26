@@ -202,14 +202,15 @@ const SEED_TRADES = [
 function buildSeededState() {
   const s = defaultState();
   s.closedTrades = [...SEED_TRADES];
-  let runningCapital = STARTING_CAPITAL;
-  // Build equity curve from trades
-  s.equityCurve = [{t: new Date('2026-02-20T00:00:00Z').getTime(), v: STARTING_CAPITAL}];
+  // Capital stays fixed at STARTING_CAPITAL — profits are separate
+  s.capital = STARTING_CAPITAL;
+  // Equity curve tracks cumulative P&L separately
+  let cumulativePnl = 0;
+  s.equityCurve = [{t: new Date('2026-02-20T00:00:00Z').getTime(), v: 0}];
   SEED_TRADES.forEach(t => {
-    runningCapital += t.pnl;
-    s.equityCurve.push({t: t.closedAt, v: runningCapital});
+    cumulativePnl += t.pnl;
+    s.equityCurve.push({t: t.closedAt, v: cumulativePnl});
   });
-  s.capital = runningCapital;
   return s;
 }
 
@@ -341,9 +342,9 @@ function getUnrealizedPnl() {
 
 function render() {
   const unrealizedPnl = getUnrealizedPnl();
-  const realizedPnl = state.capital - STARTING_CAPITAL;
+  const realizedPnl = state.closedTrades.reduce((s,t) => s + t.pnl, 0);
   const totalPnl = realizedPnl + unrealizedPnl;
-  const portfolioValue = state.capital + unrealizedPnl;
+  const portfolioValue = STARTING_CAPITAL; // Capital stays fixed
   const totalTradeCount = state.trades.length + state.closedTrades.length;
   const wins = state.closedTrades.filter(t => t.pnl >= 0).length;
   const losses = state.closedTrades.filter(t => t.pnl < 0).length;
@@ -353,12 +354,11 @@ function render() {
   // Stats
   const pvEl = document.getElementById('portfolio-value');
   pvEl.textContent = fmtUsd(portfolioValue);
-  pvEl.className = 'value ' + (portfolioValue >= STARTING_CAPITAL ? 'positive' : 'negative');
+  pvEl.className = 'value';
 
   const pcEl = document.getElementById('portfolio-change');
-  const pctChg = ((portfolioValue - STARTING_CAPITAL) / STARTING_CAPITAL * 100);
-  pcEl.textContent = (pctChg >= 0 ? '▲' : '▼') + ' ' + fmt(Math.abs(pctChg)) + '% from start';
-  pcEl.className = 'sub ' + (pctChg >= 0 ? 'positive' : 'negative');
+  pcEl.textContent = 'Fixed Trading Capital';
+  pcEl.className = 'sub';
 
   const pnlEl = document.getElementById('total-pnl');
   pnlEl.textContent = fmtPnl(totalPnl);
