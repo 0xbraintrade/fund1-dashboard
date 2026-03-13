@@ -285,13 +285,14 @@ const TRADES = [
   { id:4, coin:'BTC', side:'LONG', size:35000, lev:1, entry:70000, exit:73000,
     opened: new Date('2026-03-13T06:00:00Z').getTime(),
     closed: new Date('2026-03-13T14:53:00Z').getTime(),
-    pnl: 1500, result:'WIN' }
+    pnl: 1500, result:'WIN' },
+  { id:5, coin:'BTC', side:'LONG', size:35000, lev:1, entry:70000, exit:71000,
+    opened: new Date('2026-03-13T06:00:00Z').getTime(),
+    closed: new Date('2026-03-13T18:07:00Z').getTime(),
+    pnl: 500, result:'WIN' }
 ];
 
-const activeTrades = [
-  { id:5, coin:'BTC', side:'LONG', size:35000, lev:1, entry:70000,
-    opened: new Date('2026-03-13T06:00:00Z').getTime() }
-];
+const activeTrades = [];
 let prices = {};
 
 function buildCurve() {
